@@ -12,6 +12,7 @@ CREATE TABLE adresse
 (
   -- Clé primaire
   id INT NOT NULL PRIMARY KEY,
+  -- Rue,avenue ... Représenté par un entier
   typeVoie INT NOT NULL,
   nom TEXT NOT NULL,
   numero INT NOT NULL,
@@ -43,33 +44,43 @@ CREATE TABLE piece
 (
   -- Clé primaire
   id INTEGER PRIMARY KEY NOT NULL,
+-- étage
   z INTEGER NOT NULL,
+-- Les pièces sont relieées à un logement
   logement_id INTEGER NOT NULL,
-  FOREIGN KEY (logement_id) references logement(id)
+-- les étages étant attributs de pièce
+-- on peut factoriser les positions qui peuvent être identiques
+  position_id INT NOT NULL,
+  FOREIGN KEY (logement_id) references logement(id),
+  FOREIGN KEY (position_id) references piece(id)
+
 );
 CREATE TABLE position
 (
 -- Clé primaire
   id INTEGER PRIMARY KEY NOT NULL,
-  position_id INT NOT NULL,
   x  INTEGER NOT NULL,
-  y  INTEGER NOT NULL,
-  FOREIGN KEY (position_id) references piece(id)
+  y  INTEGER NOT NULL
 );
 CREATE TABLE capteur
 (
   -- Clé primaire
   id INTEGER PRIMARY KEY NOT NULL,
+-- numéro de port
   port INTEGER NOT NULL,
+
   date_cap INTEGER,--NOT NULL,
   ref_id INTEGER NOT NULL, --capteur
+-- Plusieurs capteurs peuvent avoir la même référence
   FOREIGN KEY (ref_id) references ref_capteur(id)
 );
 
 CREATE TABLE ref_capteur(
   -- Clé primaire
   id INTEGER PRIMARY KEY NOT NULL,
+-- type de capteur
   type TEXT,
+-- description commerciale
   ref_commerciale TEXT
 );
 
@@ -79,10 +90,16 @@ CREATE TABLE mesure(
   capteur_id INTEGER NOT NULL,
   FOREIGN KEY (capteur_id) references capteur(id)
 );
---3)
+--4)
 INSERT INTO logement VALUES(0,06113737,180000000,1);
-INSERT INTO logement VALUES(1,06113737,180000000,1);
+-- Exemple d'un duplex
+INSERT INTO piece VALUES(0,1,0,0);
+INSERT INTO piece VALUES(1,1,0,1);
+INSERT INTO piece VALUES(2,2,0,0);
+INSERT INTO piece VALUES(3,2,0,1);
  
+INSERT INTO position VALUES(0,0,0);
+INSERT INTO position VALUES(1,0,1);
 --5)
  
 INSERT INTO ref_capteur VALUES(0,'actionneur1','tres bon actionneur1');
@@ -102,10 +119,10 @@ INSERT INTO mesure VALUES(1,1212,1);
  
 -- --8)
  
-INSERT INTO facture VALUES(0,'electricite',23.5,3.5,’kW’,1,0);
-INSERT INTO facture VALUES(1,'electricite',25,3.5,’kW’,1,1);
-INSERT INTO facture VALUES(2,'eau',23.5,3.5,’m2’,01,1);
-INSERT INTO facture VALUES(3,'eau',23.5,3.5,’m2’,01,0);
+INSERT INTO facture VALUES(0,'electricite',23.5,3.5,'kW',1,0);
+INSERT INTO facture VALUES(1,'electricite',25,3.5,'kW',1,1);
+INSERT INTO facture VALUES(2,'eau',23.5,3.5,'m2',01,1);
+INSERT INTO facture VALUES(3,'eau',23.5,3.5,'m2',01,0);
  
  
  
